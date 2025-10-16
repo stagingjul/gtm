@@ -11,6 +11,7 @@ A stunning Next.js application with heavy animations and beautiful design, featu
   - 2 SSR Pages: Teams List, Players by Team (using Supabase)
 - 📊 **Real-time Data** - Football players data fetched from Supabase
 - 🎯 **Responsive** - Works perfectly on all devices
+- 📈 **Analytics** - Google Analytics (GA4) and Google Tag Manager integrated
 
 ## Tech Stack
 
@@ -87,6 +88,15 @@ table players (
 - Interactive button states
 - Rotating elements
 - Scale and position animations
+
+## Analytics Integration
+
+The application includes:
+
+- **Google Analytics (GA4)** - Tracking ID: `G-P6E7Q30JBT`
+- **Google Tag Manager** - Container ID: `GTM-MV9BWR29`
+
+Both analytics tools are configured with Next.js `Script` component using the `afterInteractive` strategy for optimal performance. The GTM noscript fallback is also included for users with JavaScript disabled.
 
 ## Build
 
