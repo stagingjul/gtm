@@ -43,7 +43,6 @@ export default function Contact() {
 
       if (submitError) throw submitError;
 
-      // Track successful submission
       if (typeof window !== 'undefined' && window.dataLayer) {
         window.dataLayer.push({
           event: 'form_submission_success',

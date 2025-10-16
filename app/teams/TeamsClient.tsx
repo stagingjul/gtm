@@ -255,6 +255,7 @@ export default function TeamsClient({ teams }: { teams: Team[] }) {
 
         {/* Footer Stats */}
         <motion.div
+          id="footer-stats-teams"
           initial={{ opacity: 0, y: 50 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 1 }}
