@@ -42,7 +42,7 @@ export default function About() {
         animate={{ opacity: 1 }}
         className="max-w-6xl mx-auto relative z-10"
       >
-        <Link href="/">
+        <Link href="/" data-gtm-nav="back_to_home_from_about" id="gtm-about-back-home">
           <motion.button
             whileHover={{ scale: 1.1, x: -5 }}
             whileTap={{ scale: 0.9 }}
@@ -127,6 +127,8 @@ export default function About() {
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.9 }}
             className="px-12 py-4 bg-white text-purple-600 rounded-full font-bold text-lg shadow-2xl hover:shadow-white/50 transition-all"
+            data-gtm-cta="get_started_about"
+            id="gtm-get-started-about"
           >
             Get Started Now
           </motion.button>

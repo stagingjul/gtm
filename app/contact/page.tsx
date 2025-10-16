@@ -3,23 +3,76 @@
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { useState } from "react";
+import { supabase } from "@/lib/supabase";
 
 export default function Contact() {
   const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    message: "",
+    pic_name: "",
+    company_name: "",
+    expected_price: "",
   });
 
   const [isSent, setIsSent] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState("");
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsSent(true);
-    setTimeout(() => {
-      setIsSent(false);
-      setFormData({ name: "", email: "", message: "" });
-    }, 3000);
+    setIsSubmitting(true);
+    setError("");
+
+    try {
+      // Track form submission attempt
+      if (typeof window !== 'undefined' && window.dataLayer) {
+        window.dataLayer.push({
+          event: 'form_submission_attempt',
+          form_name: 'contact_form',
+          company_name: formData.company_name,
+        });
+      }
+
+      const { error: submitError } = await supabase
+        .from('form_submissions')
+        .insert([
+          {
+            pic_name: formData.pic_name,
+            company_name: formData.company_name,
+            expected_price: parseFloat(formData.expected_price),
+          },
+        ]);
+
+      if (submitError) throw submitError;
+
+      // Track successful submission
+      if (typeof window !== 'undefined' && window.dataLayer) {
+        window.dataLayer.push({
+          event: 'form_submission_success',
+          form_name: 'contact_form',
+          company_name: formData.company_name,
+          expected_price: formData.expected_price,
+        });
+      }
+
+      setIsSent(true);
+      setTimeout(() => {
+        setIsSent(false);
+        setFormData({ pic_name: "", company_name: "", expected_price: "" });
+      }, 3000);
+    } catch (err) {
+      console.error('Error submitting form:', err);
+      setError('Failed to submit form. Please try again.');
+      
+      // Track submission error
+      if (typeof window !== 'undefined' && window.dataLayer) {
+        window.dataLayer.push({
+          event: 'form_submission_error',
+          form_name: 'contact_form',
+          error_message: err instanceof Error ? err.message : 'Unknown error',
+        });
+      }
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const contactInfo = [
@@ -64,7 +117,7 @@ export default function Contact() {
         animate={{ opacity: 1 }}
         className="max-w-6xl mx-auto relative z-10"
       >
-        <Link href="/">
+        <Link href="/" data-gtm-nav="back_to_home_from_contact" id="gtm-contact-back-home">
           <motion.button
             whileHover={{ scale: 1.1, x: -5 }}
             whileTap={{ scale: 0.9 }}
@@ -117,21 +170,32 @@ export default function Contact() {
             <div className="bg-white/10 backdrop-blur-xl rounded-3xl p-8 border border-white/20 shadow-2xl">
               <h2 className="text-3xl font-bold text-white mb-6">Send us a message</h2>
               
-              <form onSubmit={handleSubmit} className="space-y-6">
+              <form 
+                onSubmit={handleSubmit} 
+                className="space-y-6"
+                id="gtm-contact-form"
+                data-gtm-form="contact"
+              >
                 <motion.div
                   initial={{ x: -50, opacity: 0 }}
                   animate={{ x: 0, opacity: 1 }}
                   transition={{ delay: 0.4 }}
                 >
-                  <label className="block text-white mb-2 font-semibold">Name</label>
+                  <label htmlFor="pic_name" className="block text-white mb-2 font-semibold">
+                    PIC Name <span className="text-red-400">*</span>
+                  </label>
                   <motion.input
                     whileFocus={{ scale: 1.02 }}
                     type="text"
-                    value={formData.name}
-                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                    id="pic_name"
+                    name="pic_name"
+                    value={formData.pic_name}
+                    onChange={(e) => setFormData({ ...formData, pic_name: e.target.value })}
                     className="w-full px-4 py-3 rounded-xl bg-white/10 border border-white/20 text-white placeholder-gray-400 focus:outline-none focus:border-white/50 transition-all backdrop-blur-lg"
-                    placeholder="Your name"
+                    placeholder="Person in Charge Name"
+                    data-gtm-field="pic_name"
                     required
+                    disabled={isSubmitting}
                   />
                 </motion.div>
 
@@ -140,15 +204,21 @@ export default function Contact() {
                   animate={{ x: 0, opacity: 1 }}
                   transition={{ delay: 0.5 }}
                 >
-                  <label className="block text-white mb-2 font-semibold">Email</label>
+                  <label htmlFor="company_name" className="block text-white mb-2 font-semibold">
+                    Company Name <span className="text-red-400">*</span>
+                  </label>
                   <motion.input
                     whileFocus={{ scale: 1.02 }}
-                    type="email"
-                    value={formData.email}
-                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                    type="text"
+                    id="company_name"
+                    name="company_name"
+                    value={formData.company_name}
+                    onChange={(e) => setFormData({ ...formData, company_name: e.target.value })}
                     className="w-full px-4 py-3 rounded-xl bg-white/10 border border-white/20 text-white placeholder-gray-400 focus:outline-none focus:border-white/50 transition-all backdrop-blur-lg"
-                    placeholder="your@email.com"
+                    placeholder="Your Company Name"
+                    data-gtm-field="company_name"
                     required
+                    disabled={isSubmitting}
                   />
                 </motion.div>
 
@@ -157,33 +227,67 @@ export default function Contact() {
                   animate={{ x: 0, opacity: 1 }}
                   transition={{ delay: 0.6 }}
                 >
-                  <label className="block text-white mb-2 font-semibold">Message</label>
-                  <motion.textarea
+                  <label htmlFor="expected_price" className="block text-white mb-2 font-semibold">
+                    Expected Budget (USD) <span className="text-red-400">*</span>
+                  </label>
+                  <motion.input
                     whileFocus={{ scale: 1.02 }}
-                    value={formData.message}
-                    onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                    className="w-full px-4 py-3 rounded-xl bg-white/10 border border-white/20 text-white placeholder-gray-400 focus:outline-none focus:border-white/50 transition-all backdrop-blur-lg h-32 resize-none"
-                    placeholder="Your message..."
+                    type="number"
+                    id="expected_price"
+                    name="expected_price"
+                    step="0.01"
+                    min="0"
+                    value={formData.expected_price}
+                    onChange={(e) => setFormData({ ...formData, expected_price: e.target.value })}
+                    className="w-full px-4 py-3 rounded-xl bg-white/10 border border-white/20 text-white placeholder-gray-400 focus:outline-none focus:border-white/50 transition-all backdrop-blur-lg"
+                    placeholder="e.g., 5000.00"
+                    data-gtm-field="expected_price"
                     required
+                    disabled={isSubmitting}
                   />
                 </motion.div>
 
+                {error && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="bg-red-500/20 border border-red-500/50 rounded-xl p-4 text-white"
+                    data-gtm-error="form_error"
+                  >
+                    {error}
+                  </motion.div>
+                )}
+
                 <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
+                  whileHover={{ scale: isSubmitting ? 1 : 1.05 }}
+                  whileTap={{ scale: isSubmitting ? 1 : 0.95 }}
                   type="submit"
-                  className="w-full py-4 bg-gradient-to-r from-green-500 to-blue-500 text-white rounded-xl font-bold text-lg shadow-2xl hover:shadow-green-500/50 transition-all relative overflow-hidden"
+                  id="gtm-submit-contact-form"
+                  data-gtm-button="submit_contact"
+                  className="w-full py-4 bg-gradient-to-r from-green-500 to-blue-500 text-white rounded-xl font-bold text-lg shadow-2xl hover:shadow-green-500/50 transition-all relative overflow-hidden disabled:opacity-50 disabled:cursor-not-allowed"
+                  disabled={isSubmitting}
                 >
                   {isSent ? (
                     <motion.span
                       initial={{ y: 50 }}
                       animate={{ y: 0 }}
                       className="flex items-center justify-center gap-2"
+                      data-gtm-state="success"
                     >
-                      <span>✓</span> Message Sent!
+                      <span>✓</span> Submission Successful!
                     </motion.span>
+                  ) : isSubmitting ? (
+                    <span className="flex items-center justify-center gap-2">
+                      <motion.span
+                        animate={{ rotate: 360 }}
+                        transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                      >
+                        ⏳
+                      </motion.span>
+                      Submitting...
+                    </span>
                   ) : (
-                    "Send Message"
+                    "Submit Inquiry"
                   )}
                 </motion.button>
               </form>

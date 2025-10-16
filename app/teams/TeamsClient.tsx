@@ -80,7 +80,7 @@ export default function TeamsClient({ teams }: { teams: Team[] }) {
       />
 
       <div className="max-w-7xl mx-auto relative z-10">
-        <Link href="/">
+        <Link href="/" data-gtm-nav="back_to_home_from_teams" id="gtm-teams-back-home">
           <motion.button
             whileHover={{ scale: 1.1, x: -5 }}
             whileTap={{ scale: 0.9 }}
@@ -159,7 +159,11 @@ export default function TeamsClient({ teams }: { teams: Team[] }) {
                   }}
                 />
 
-                <Link href={`/players/${encodeURIComponent(team.name)}`}>
+                <Link 
+                  href={`/players/${encodeURIComponent(team.name)}`}
+                  data-gtm-team={team.name}
+                  id={`gtm-team-${team.name.toLowerCase().replace(/\s+/g, '-')}`}
+                >
                   <div className="relative bg-slate-900/80 backdrop-blur-xl rounded-3xl p-8 border border-white/10 hover:border-white/30 transition-all shadow-2xl h-full overflow-hidden">
                     {/* Decorative corner elements */}
                     <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-white/5 to-transparent rounded-bl-full" />

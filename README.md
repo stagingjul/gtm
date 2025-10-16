@@ -74,9 +74,25 @@ table players (
 1. **Home** - Landing page with animated navigation cards
 2. **About** - Company information with feature cards
 3. **Services** - Pricing and service offerings
-4. **Contact** - Contact form with info cards
+4. **Contact** - Interactive contact form with Supabase integration and GTM tracking
 5. **Teams** - List of all teams with stats (SSR from Supabase)
 6. **Players** - Detailed player cards filtered by team (SSR from Supabase)
+
+### Contact Form Submission
+
+The contact page includes a fully functional form that submits data to Supabase:
+
+**Fields:**
+- Person in Charge (PIC) Name
+- Company Name
+- Expected Budget (USD)
+
+**Features:**
+- Real-time form validation
+- Loading states during submission
+- Success/error feedback with animations
+- Data persistence in Supabase `form_submissions` table
+- Comprehensive GTM tracking for all form events
 
 ## Animation Features
 
@@ -97,6 +113,19 @@ The application includes:
 - **Google Tag Manager** - Container ID: `GTM-MV9BWR29`
 
 Both analytics tools are configured with Next.js `Script` component using the `afterInteractive` strategy for optimal performance. The GTM noscript fallback is also included for users with JavaScript disabled.
+
+### GTM Tracking Elements
+
+Comprehensive tracking IDs have been implemented across all critical user interactions:
+
+- **Navigation Links** - All page navigation with unique IDs
+- **Form Elements** - Contact form fields and submission tracking
+- **Team Cards** - Individual team selection tracking
+- **Player Cards** - Player card views and interactions
+- **CTA Buttons** - All call-to-action buttons
+- **DataLayer Events** - Custom events for form submissions (attempt, success, error)
+
+For detailed GTM implementation guide, see [GTM_TRACKING.md](GTM_TRACKING.md).
 
 ## Build
 

@@ -84,7 +84,7 @@ export default function PlayersClient({ team, players }: { team: string; players
 
       <div className="max-w-7xl mx-auto relative z-10">
         <div className="flex gap-4 mb-8">
-          <Link href="/">
+          <Link href="/" data-gtm-nav="back_to_home" id="gtm-back-home">
             <motion.button
               whileHover={{ scale: 1.1, x: -5 }}
               whileTap={{ scale: 0.9 }}
@@ -93,7 +93,7 @@ export default function PlayersClient({ team, players }: { team: string; players
               ← Home
             </motion.button>
           </Link>
-          <Link href="/teams">
+          <Link href="/teams" data-gtm-nav="back_to_teams" id="gtm-back-teams">
             <motion.button
               whileHover={{ scale: 1.1, x: -5 }}
               whileTap={{ scale: 0.9 }}
@@ -182,6 +182,9 @@ export default function PlayersClient({ team, players }: { team: string; players
                   }}
                   whileHover={{ y: -20, scale: 1.05 }}
                   className="group relative"
+                  data-gtm-player={player.name}
+                  data-gtm-player-team={player.team}
+                  id={`gtm-player-${player.id}`}
                 >
                   {/* Glow effect */}
                   <motion.div

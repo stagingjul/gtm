@@ -38,7 +38,7 @@ export default function Services() {
         animate={{ opacity: 1 }}
         className="max-w-7xl mx-auto"
       >
-        <Link href="/">
+        <Link href="/" data-gtm-nav="back_to_home_from_services" id="gtm-services-back-home">
           <motion.button
             whileHover={{ scale: 1.1, x: -5 }}
             whileTap={{ scale: 0.9 }}
@@ -158,6 +158,8 @@ export default function Services() {
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   className={`w-full py-4 bg-gradient-to-r ${service.color} text-white rounded-2xl font-bold text-lg shadow-2xl hover:shadow-3xl transition-all`}
+                  data-gtm-cta={`choose_plan_${service.title.toLowerCase().replace(/\s+/g, '_')}`}
+                  id={`gtm-plan-${index}`}
                 >
                   Choose Plan
                 </motion.button>

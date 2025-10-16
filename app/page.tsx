@@ -127,6 +127,8 @@ export default function Home() {
               <Link
                 href={page.href}
                 className="group relative block p-8 rounded-2xl bg-white/10 backdrop-blur-lg border border-white/20 shadow-2xl overflow-hidden transition-all duration-300 hover:shadow-purple-500/50"
+                data-gtm-nav={`nav_${page.name.toLowerCase()}`}
+                id={`gtm-nav-${page.name.toLowerCase()}`}
               >
                 {page.badge && (
                   <motion.span
